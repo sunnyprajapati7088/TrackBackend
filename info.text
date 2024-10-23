@@ -1,0 +1,76 @@
+/backend
+├── /config          # Configuration files (database, environment variables, etc.)
+│   └── db.js       # Database connection setup
+│   └── config.js   # General configuration settings (e.g., API keys)
+├── /controllers     # Controllers for handling requests and responses
+│   ├── userController.js
+│   ├── busController.js
+│   ├── routeController.js
+│   └── gpsController.js
+├── /models          # Mongoose models for MongoDB
+│   ├── User.js
+│   ├── Bus.js
+│   ├── Route.js
+│   └── GpsData.js
+├── /routes          # Express routes
+│   ├── userRoutes.js
+│   ├── busRoutes.js
+│   ├── routeRoutes.js
+│   └── gpsRoutes.js
+├── /middlewares     # Middleware for handling requests
+│   ├── authMiddleware.js
+│   └── errorMiddleware.js
+├── /utils           # Utility functions (e.g., logging, helper functions)
+│   ├── logger.js
+│   └── notification.js
+├── /services        # Business logic and services
+│   ├── userService.js
+│   ├── busService.js
+│   └── gpsService.js
+├── /tests           # Unit and integration tests
+│   ├── user.test.js
+│   ├── bus.test.js
+│   └── route.test.js
+├── .env             # Environment variables
+├── .gitignore       # Files and directories to ignore in git
+├── server.js        # Entry point of the application
+└── package.json      # Project metadata and dependencies
+
+
+/frontend
+├── /public             # Publicly accessible files (HTML, images, etc.)
+│   ├── index.html      # Main HTML file
+│   ├── favicon.ico     # Favicon
+│   └── /images         # Images used in the application
+├── /src                # Source code for the application
+│   ├── /assets         # Static assets (images, fonts, etc.)
+│   ├── /components     # Reusable UI components
+│   │   ├── BusList.js
+│   │   ├── BusDetail.js
+│   │   ├── UserForm.js
+│   │   ├── Navbar.js
+│   │   └── Map.js
+│   ├── /contexts       # Context API for global state management (if needed)
+│   ├── /hooks          # Custom React hooks
+│   ├── /pages          # Page components
+│   │   ├── Home.js
+│   │   ├── Buses.js
+│   │   ├── Profile.js
+│   │   └── NotFound.js
+│   ├── /redux          # Redux-related files (if using Redux)
+│   │   ├── actions.js
+│   │   ├── reducers.js
+│   │   └── store.js
+│   ├── /services       # API calls and service functions
+│   │   ├── api.js      # API request functions
+│   │   └── busService.js
+│   ├── /styles         # CSS or styled components
+│   │   ├── App.css
+│   │   └── tailwind.css # If using Tailwind CSS
+│   ├── /utils          # Utility functions
+│   ├── App.js          # Main application component
+│   ├── index.js        # Entry point of the React application
+│   └── setupTests.js   # Setup for testing (if using testing libraries)
+├── .env                # Environment variables
+├── .gitignore          # Files and directories to ignore in git
+└── package.json        # Project metadata and dependencies
