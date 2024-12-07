@@ -1,11 +1,60 @@
-// const adminRoutes = require("./routes/adminRoutes");
-// const conductorRoutes = require("./routes/conductorRoutes");
-// console.log(conductorRoutes)
+// // const adminRoutes = require("./routes/adminRoutes");
+// // const conductorRoutes = require("./routes/conductorRoutes");
+// // console.log(conductorRoutes)
+// // const express = require("express");
+// // const cors = require("cors");
+// // const connectDB = require("./config/db");
+// // const http = require("http");
+// // const socketIo = require("socket.io");
+
+// // const app = express();
+
+// // // Connect to the database
+// // connectDB();
+
+// // // CORS configuration
+// // const corsOptions = {
+// //   origin: "http://localhost:5173", // Specify the origin you want to allow
+// //   methods: ["GET", "POST"],
+// //   credentials: true, // Allow credentials if needed
+// // };
+
+// // app.use(cors(corsOptions)); // Use the custom CORS options
+// // app.use(express.json());
+
+// // // Other imports
+
+// // app.use("/api/conductor", conductorRoutes);
+// // app.use("/api/admin", adminRoutes); // Add this line for admin routes
+
+// // // Create the HTTP server and Socket.IO instance
+// // const server = http.createServer(app);
+// // const io = socketIo(server);
+
+// // // Socket.IO connection
+// // io.on("connection", (socket) => {
+// //   console.log("New client connected");
+
+// //   socket.on("disconnect", () => {
+// //     console.log("Client disconnected");
+// //   });
+// // });
+
+// // // Start the server
+// // const PORT = process.env.PORT || 5000;
+// // server.listen(PORT, () => {
+// //   console.log(`Server running on port ${PORT}`);
+// // });
+
+
 // const express = require("express");
 // const cors = require("cors");
 // const connectDB = require("./config/db");
 // const http = require("http");
 // const socketIo = require("socket.io");
+
+// const adminRoutes = require("./routes/adminRoutes");
+// const conductorRoutes = require("./routes/conductorRoutes");
 
 // const app = express();
 
@@ -19,13 +68,13 @@
 //   credentials: true, // Allow credentials if needed
 // };
 
-// app.use(cors(corsOptions)); // Use the custom CORS options
-// app.use(express.json());
+// // Use CORS middleware
+// app.use(cors(corsOptions));
+// app.use(express.json()); // Middleware to parse JSON bodies
 
-// // Other imports
-
+// // Define your routes
 // app.use("/api/conductor", conductorRoutes);
-// app.use("/api/admin", adminRoutes); // Add this line for admin routes
+// app.use("/api/admin", adminRoutes); // Add admin routes
 
 // // Create the HTTP server and Socket.IO instance
 // const server = http.createServer(app);
@@ -35,6 +84,14 @@
 // io.on("connection", (socket) => {
 //   console.log("New client connected");
 
+//   // Handle conductor location updates
+//   socket.on("conductorLocation", (data) => {
+//     console.log("Conductor Location:", data);
+//     // Broadcast location to all connected clients
+//     socket.broadcast.emit("busLocationUpdated", data);
+//   });
+
+//   // Handle disconnection
 //   socket.on("disconnect", () => {
 //     console.log("Client disconnected");
 //   });
@@ -47,58 +104,142 @@
 // });
 
 
-const express = require("express");
-const cors = require("cors");
-const connectDB = require("./config/db");
-const http = require("http");
-const socketIo = require("socket.io");
 
-const adminRoutes = require("./routes/adminRoutes");
-const conductorRoutes = require("./routes/conductorRoutes");
+
+
+
+
+//secoond
+// const express = require("express");
+// const http = require("http");
+// const { Server } = require("socket.io");
+
+// const app = express();
+// const server = http.createServer(app);
+// const io = new Server(server);
+
+// let buses = {};
+
+// io.on("connection", (socket) => {
+//   console.log("A user connected:", socket.id);
+
+//   socket.on("updateLocation", (data) => {
+//     buses[data.busId] = data.location;
+//     io.emit("busLocations", buses);
+//   });
+
+//   socket.on("disconnect", () => {
+//     console.log("A user disconnected:", socket.id);
+//   });
+// });
+
+// app.get("/", (req, res) => {
+//   res.send("Bus Tracking Server Running...");
+// });
+
+// server.listen(3000, () => {
+//   console.log("Server running on http://localhost:3000");
+// });
+
+// const express = require("express");
+// const http = require("http");
+// const { Server } = require("socket.io");
+
+// const app = express();
+// const server = http.createServer(app);
+// const io = new Server(server);
+
+// let buses = {}; // Store bus locations
+// let connectedClients = {}; // Track connected sockets
+
+// // Handle new client connections
+// io.on("connection", (socket) => {
+//   console.log(`Client connected: ${socket.id}`);
+
+//   // Register the bus when connected
+//   socket.on("registerBus", (busId) => {
+//     connectedClients[socket.id] = busId;
+//     console.log(`Bus ${busId} registered with socket ID ${socket.id}`);
+//   });
+
+//   // Handle location updates
+//   socket.on("updateLocation", (data) => {
+//     const { busId, location } = data;
+//     buses[busId] = location;
+
+//     // Broadcast updated locations to all clients
+//     io.emit("busLocations", buses);
+//     console.log(`Updated location for Bus ${busId}:`, location);
+//   });
+
+//   // Handle disconnections
+//   socket.on("disconnect", () => {
+//     const busId = connectedClients[socket.id];
+//     console.log(`Client disconnected: ${socket.id} (Bus ${busId})`);
+
+//     // Remove the bus from tracking if its socket disconnects
+//     if (busId) {
+//       delete buses[busId];
+//       delete connectedClients[socket.id];
+//       io.emit("busLocations", buses); // Update other clients
+//     }
+//   });
+// });
+
+// app.get("/", (req, res) => {
+//   res.send("Bus Tracking Server is running...");
+// });
+
+// server.listen(3000, () => {
+//   console.log("Server running on http://localhost:3000");
+// });
+
+
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
 
 const app = express();
-
-// Connect to the database
-connectDB();
-
-// CORS configuration
-const corsOptions = {
-  origin: "http://localhost:5173", // Specify the origin you want to allow
-  methods: ["GET", "POST"],
-  credentials: true, // Allow credentials if needed
-};
-
-// Use CORS middleware
-app.use(cors(corsOptions));
-app.use(express.json()); // Middleware to parse JSON bodies
-
-// Define your routes
-app.use("/api/conductor", conductorRoutes);
-app.use("/api/admin", adminRoutes); // Add admin routes
-
-// Create the HTTP server and Socket.IO instance
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = new Server(server, {
+  cors: {
+    origin: "*", // Allow frontend from any origin
+  },
+});
 
-// Socket.IO connection
+let buses = {}; // Store bus locations
+
+// Socket.IO Connection
 io.on("connection", (socket) => {
-  console.log("New client connected");
+  console.log(`Client connected: ${socket.id}`);
 
-  // Handle conductor location updates
-  socket.on("conductorLocation", (data) => {
-    console.log("Conductor Location:", data);
-    // Broadcast location to all connected clients
-    socket.broadcast.emit("busLocationUpdated", data);
+  // Handle bus registration
+  socket.on("registerBus", (busId) => {
+    console.log(`Bus ${busId} registered with socket ID ${socket.id}`);
+  });
+
+  // Handle location updates
+  socket.on("updateLocation", (data) => {
+    const { busId, location } = data;
+    buses[busId] = location;
+
+    // Broadcast updated locations to all clients
+    io.emit("busLocations", buses);
+    console.log(`Updated location for Bus ${busId}:`, location);
   });
 
   // Handle disconnection
   socket.on("disconnect", () => {
-    console.log("Client disconnected");
+    console.log(`Client disconnected: ${socket.id}`);
   });
 });
 
-// Start the server
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Run the server
+app.get("/", (req, res) => {
+  res.send("Bus Tracking Server is running...");
 });
+
+server.listen(3000, () => {
+  console.log("Server running on http://localhost:3000");
+});
+
