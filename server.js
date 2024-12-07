@@ -195,6 +195,161 @@
 // });
 
 
+// const express = require("express");
+// const http = require("http");
+// const { Server } = require("socket.io");
+
+// const app = express();
+// const server = http.createServer(app);
+// const io = new Server(server, {
+//   cors: {
+//     origin: "*", // Allow frontend from any origin
+//   },
+// });
+
+// let buses = {}; // Store bus locations
+
+// // Socket.IO Connection
+// io.on("connection", (socket) => {
+//   console.log(`Client connected: ${socket.id}`);
+
+//   // Handle bus registration
+//   socket.on("registerBus", (busId) => {
+//     console.log(`Bus ${busId} registered with socket ID ${socket.id}`);
+//   });
+
+//   // Handle location updates
+//   socket.on("updateLocation", (data) => {
+//     const { busId, location } = data;
+//     buses[busId] = location;
+
+//     // Broadcast updated locations to all clients
+//     io.emit("busLocations", buses);
+//     console.log(`Updated location for Bus ${busId}:`, location);
+//   });
+
+//   // Handle disconnection
+//   socket.on("disconnect", () => {
+//     console.log(`Client disconnected: ${socket.id}`);
+//   });
+// });
+
+// // Run the server
+// app.get("/", (req, res) => {
+//   res.send("Bus Tracking Server is running...");
+// });
+
+// server.listen(3000, () => {
+//   console.log("Server running on http://localhost:3000");
+// });
+
+// const express = require("express");
+// const http = require("http");
+// const { Server } = require("socket.io");
+
+// const app = express();
+// const server = http.createServer(app);
+// const io = new Server(server, {
+//   cors: {
+//     origin: "*", // Allow frontend from any origin
+//   },
+// });
+
+// let buses = {};
+
+// // Handle socket connections
+// io.on("connection", (socket) => {
+//   console.log(`Client connected: ${socket.id}`);
+
+//   // Register a bus
+//   socket.on("registerBus", (busId) => {
+//     if (busId && busId.trim()) {
+//       console.log(`Bus ${busId} registered with socket ID ${socket.id}`);
+//     } else {
+//       console.error("Invalid bus ID registration attempt.");
+//     }
+//   });
+
+//   // Handle location updates
+//   socket.on("updateLocation", (data) => {
+//     const { busId, location } = data;
+
+//     if (!busId || !location || !location.lat || !location.lng) {
+//       console.error("Invalid location update received.");
+//       return;
+//     }
+
+//     // Update the bus's location
+//     buses[busId] = location;
+//     io.emit("busLocations", buses); // Broadcast updated locations
+//     console.log(`Updated location for Bus ${busId}:`, location);
+//   });
+
+//   // Handle disconnection
+//   socket.on("disconnect", () => {
+//     console.log(`Client disconnected: ${socket.id}`);
+//   });
+// });
+
+// server.listen(3000, () => {
+//   console.log("Server running on http://localhost:3000");
+// });
+
+// const express = require("express");
+// const http = require("http");
+// const { Server } = require("socket.io");
+
+// const app = express();
+// const server = http.createServer(app);
+// const io = new Server(server, {
+//   cors: {
+//     origin: "*", // Allow requests from anywhere
+//   },
+// });
+
+// let buses = {}; // Store bus locations
+
+// // Handle socket connections
+// io.on("connection", (socket) => {
+//   console.log(`Client connected: ${socket.id}`);
+
+//   // Register a bus
+//   socket.on("registerBus", (busId) => {
+//     if (busId && busId.trim()) {
+//       console.log(`Bus ${busId} registered with socket ID ${socket.id}`);
+//     } else {
+//       console.error("Invalid bus ID registration attempt.");
+//     }
+//   });
+
+//   // Handle location updates
+//   socket.on("updateLocation", (data) => {
+//     const { busId, location } = data;
+
+//     if (!busId || !location || !location.lat || !location.lng) {
+//       console.error("Invalid location update received:", data);
+//       return;
+//     }
+
+//     // Update the bus's location
+//     buses[busId] = location;
+
+//     // Broadcast updated locations to all connected clients
+//     io.emit("busLocations", buses);
+//     console.log(`Updated location for Bus ${busId}:`, location);
+//   });
+
+//   // Handle client disconnection
+//   socket.on("disconnect", () => {
+//     console.log(`Client disconnected: ${socket.id}`);
+//   });
+// });
+
+// server.listen(3000, () => {
+//   console.log("Server running on http://localhost:3000");
+// });
+
+
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -203,43 +358,59 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*", // Allow frontend from any origin
+    origin: "*", // Allow requests from any origin
   },
 });
 
-let buses = {}; // Store bus locations
+let buses = {}; // Store all bus locations
 
-// Socket.IO Connection
+// Handle socket connections
 io.on("connection", (socket) => {
   console.log(`Client connected: ${socket.id}`);
 
-  // Handle bus registration
+  // Register a bus
   socket.on("registerBus", (busId) => {
-    console.log(`Bus ${busId} registered with socket ID ${socket.id}`);
+    if (busId && busId.trim()) {
+      if (!buses[busId]) {
+        buses[busId] = { lat: 0, lng: 0 }; // Initialize bus location
+      }
+      console.log(`Bus ${busId} registered with socket ID ${socket.id}`);
+    } else {
+      console.error("Invalid bus ID registration attempt.");
+    }
   });
 
   // Handle location updates
   socket.on("updateLocation", (data) => {
     const { busId, location } = data;
+
+    if (!busId || !location || !location.lat || !location.lng) {
+      console.error("Invalid location update received:", data);
+      return;
+    }
+
+    // Update the bus's location
     buses[busId] = location;
 
-    // Broadcast updated locations to all clients
+    // Simulate all other buses moving by adjusting lat/lng
+    Object.keys(buses).forEach((id) => {
+      if (id !== busId) {
+        buses[id].lat += 0.0001; // Slightly adjust latitude
+        buses[id].lng += 0.0001; // Slightly adjust longitude
+      }
+    });
+
+    // Broadcast updated locations to all connected clients
     io.emit("busLocations", buses);
     console.log(`Updated location for Bus ${busId}:`, location);
   });
 
-  // Handle disconnection
+  // Handle client disconnection
   socket.on("disconnect", () => {
     console.log(`Client disconnected: ${socket.id}`);
   });
 });
 
-// Run the server
-app.get("/", (req, res) => {
-  res.send("Bus Tracking Server is running...");
-});
-
 server.listen(3000, () => {
   console.log("Server running on http://localhost:3000");
 });
-
